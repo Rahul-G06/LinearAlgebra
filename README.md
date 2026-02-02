@@ -10,7 +10,7 @@ You should see something like:
 ```bash
 cmake version 3.16.3
 ```
-You should also ensure that you are using a suitable compiler. E.g. gcc or clang
+You should also ensure that you are using a compiler that supports this. E.g. gcc
 ```bash
 gcc --version
 ```
