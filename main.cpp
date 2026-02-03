@@ -31,6 +31,26 @@ int main()
 
     Vector<float, 2> r = p * 2;
     std::cout << r.data[0] << " " << r.data[1] << std::endl;
+    r = r / 2;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
+
+    r += r;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
+    r -= r / 2;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
+    r *= 3;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
+    r /= 4;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
+
+    p = -r;
+    std::cout << p.data[0] << " " << p.data[1] << std::endl;
+
+    Vector<int, 2> s;
+    s = p;
+    std::cout << s.data[0] << " " << s.data[1] << std::endl;
+
+    Vector<int, 2> t(r);
+    std::cout << t.data[0] << " " << t.data[1] << std::endl;
     return 0;
 }
-
