@@ -52,5 +52,23 @@ int main()
 
     Vector<int, 2> t(r);
     std::cout << t.data[0] << " " << t.data[1] << std::endl;
+
+    t[0] = 5;
+    std::cout << t[0] << " " << t[1] << std::endl;
+
+    t = {2, 3};
+    s = {3, -2};
+
+    int d = dot(t, s);
+    std::cout << d << std::endl;
+    std::cout << t.magnitude() << std::endl;
+    std::cout << r.magnitude() << std::endl;
+    
+    p.normalize();
+    std::cout << p.data[0] << " " << p.data[1] << std::endl;
+
+    r = p.normalized();
+    r = -r;
+    std::cout << r.data[0] << " " << r.data[1] << std::endl;
     return 0;
 }

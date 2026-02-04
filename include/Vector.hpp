@@ -1,6 +1,7 @@
 #pragma once
 #include <stdexcept>
 #include <cstddef>
+#include <cmath>
 #include <type_traits>
 #include <initializer_list>
 
@@ -30,6 +31,9 @@ public:
     // Casting constructor
     template <typename U>
     explicit Vector(const Vector<U, size>& v) noexcept;
+    // Assignment operator with implicit type cast
+    template<class U>
+    Vector<T, size>& operator=(const Vector<U, size>& v) noexcept;
 
     Vector<T, size> operator+(const Vector<T, size>& v2) const;
     Vector<T, size> operator+=(const Vector<T, size>& v2);
@@ -49,11 +53,14 @@ public:
     Vector<T, size> operator*=(const T c);
     Vector<T, size> operator/(const T c) const;
     Vector<T, size> operator/=(const T c);
-
-    template<class U>
-    Vector<T, size>& operator=(const Vector<U, size>& v) noexcept;
+    T &operator[](const std::size_t i);
+    T magnitude() const;
+    void normalize();
+    Vector<T, size> normalized() const;
 };
 
+template <class T, std::size_t size>
+T dot(const Vector<T, size>& v1, const Vector<T, size>& v2);
 
 // Default constructor
 // We don't initialize the values since that is unnecessary computation
@@ -131,6 +138,17 @@ Vector<T, size>::Vector(const Vector<U, size>& v) noexcept
     for(int i = 0; i < size; ++i) data[i] = static_cast<T> (v.data[i]);
 }
 
+// overload operator=
+// this allows for type casting
+// I decided to include this because it might be annoying to deal with later
+template<class T, std::size_t size>
+template<class U>
+Vector<T, size>& Vector<T, size>::operator=(const Vector<U, size>& v) noexcept
+{
+    for(int i = 0; i < size; ++i) data[i] = static_cast<T>(v.data[i]);
+
+    return *this;
+}
 
 // overload operator+
 // This adds two vectors
@@ -272,14 +290,83 @@ Vector<T, size> Vector<T, size>::operator/=(const T c)
     return *this;
 }
 
-// overload operator=
-// this allows for type casting
-// I decided to include this because it might be annoying to deal with later
-template<class T, std::size_t size>
-template<class U>
-Vector<T, size>& Vector<T, size>::operator=(const Vector<U, size>& v) noexcept
+// overload operator[]
+// this is just for easier access
+// instead of writing v.data[i], you can write v[i]
+/*
+Example usage:
+    Vector<float, 2> v{2.0, 3.0};
+    v[0] = 5.0;
+    float a = v[1];
+*/
+template <class T, std::size_t size>
+T& Vector<T, size>::operator[](const std::size_t i)
 {
-    for(int i = 0; i < size; ++i) data[i] = static_cast<T>(v.data[i]);
+    return data[i];
+}
 
-    return *this;
+// returns the magnitude of a given vector
+/*
+Example usage:
+    Vector<float, 2> v{8.25, 9.75};
+    float m = v.magnitude();
+*/
+template <class T, std::size_t size>
+T Vector<T, size>::magnitude() const 
+{
+    T a = 0;
+    for(int i = 0; i < size; ++i) 
+        a += data[i] * data[i];
+    
+    return (T) sqrt(a);
+}
+
+// returns the dot product of two vectors
+/*
+Example usage:
+    Vector<float, 2> v1{2.0, 3.0};
+    Vector<float, 2 v2{-3.0, 2.0};
+    float d = dot(v1, v2);
+*/
+template <class T, std::size_t size>
+T dot(const Vector<T, size>& v1, const Vector<T, size>& v2)
+{
+    T result = 0;
+    for(int i = 0; i < size; ++i)
+        result += (v1.data[i] * v2.data[i]);
+    
+    return result;
+}
+
+// normalizes the vector in place
+// basically, converts the vector into a direction vector
+/*
+Example usage:
+    Vector<float, 2> v{4.0, 5.0};
+    v.normalize();
+*/
+template<class T, std::size_t size>
+void Vector<T, size>::normalize()
+{
+    float m = this->magnitude();
+    for(int i = 0; i < size; ++i)
+        data[i] /= m;
+}
+
+// returns a normalized vesion of the vector
+// basically, returns the direction vector of a vector
+/*
+Example usage:
+    Vector<float, 2> v{4.0, 5.0};
+    Vector<float, 2> u = v.normalized();
+*/
+template <class T, std::size_t size>
+Vector<T, size> Vector<T, size>::normalized() const
+{
+    Vector v;
+    float m = this->magnitude();
+    for(int i = 0; i < size; ++i)
+        v.data[i] = data[i] / m;
+
+    return v;
 }
